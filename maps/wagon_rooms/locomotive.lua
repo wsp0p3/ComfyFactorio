@@ -14,7 +14,6 @@ local function create_chest(surface, position)
     return chest
 end
 
-
 function create_exit_car(surface, position, name, direction)
     local e = surface.create_entity({name = "car", position = position, force = "player", create_build_effect_smoke = false})
     e.get_inventory(defines.inventory.fuel).insert({name = "wood", count = 16})
@@ -55,10 +54,33 @@ local function create_wagon_room(name)
 	end
 
 	local surface = global.wagons[name].surface
+
+
 	surface.freeze_daytime = true
 	surface.daytime = 0.1
-	surface.request_to_generate_chunks({0,0}, 12)
+	surface.request_to_generate_chunks({0,0}, 1)
 	surface.force_generate_chunk_requests()
+
+	for i = map_gen_settings.width * -0.5, map_gen_settings.width * 0.5, 1 do
+        for j = map_gen_settings.height * -0.5, map_gen_settings.height * 0.5, 1 do
+	        surface.set_tiles({{name = "refined-concrete", position = {x = i, y = j }}})
+        end
+    end
+
+    surface.set_tiles({{name = "water", position = {x = -8, y = -16 }}})
+    surface.set_tiles({{name = "water", position = {x = -8, y = -15 }}})
+    surface.set_tiles({{name = "water", position = {x = -7, y = -16 }}})
+    surface.set_tiles({{name = "water", position = {x = -7, y = -15 }}})
+    surface.set_tiles({{name = "water", position = {x = -6, y = -16 }}})
+    surface.set_tiles({{name = "water", position = {x = -6, y = -15 }}})
+
+    surface.set_tiles({{name = "water", position = {x = -8, y = 16 }}})
+    surface.set_tiles({{name = "water", position = {x = -8, y = 15 }}})
+    surface.set_tiles({{name = "water", position = {x = -7, y = 16 }}})
+    surface.set_tiles({{name = "water", position = {x = -7, y = 15 }}})
+    surface.set_tiles({{name = "water", position = {x = -6, y = 16 }}})
+    surface.set_tiles({{name = "water", position = {x = -6, y = 15 }}})
+
 
     global.wagons[name]["exits"] = {}
 
