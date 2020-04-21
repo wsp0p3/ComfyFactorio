@@ -121,6 +121,8 @@ require "modules.autostash"
 --require "maps.pitch_black.main"
 --require "maps.cube"
 --require "maps.forest_circle"
+require "maps.wagon_rooms.main"
+
 -----------------------------
 
 ---- more modules here ----
