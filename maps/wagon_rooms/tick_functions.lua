@@ -32,8 +32,8 @@ function Public_tick.move_items()
 
         if input_filter ~= nil then
             for i = 1, #cargo, 1 do
-                if cargo[i].valid_for_read then
-                    for _, signal in pairs(input_filter) do
+                for _, signal in pairs(input_filter) do
+                    if cargo[i].valid_for_read then
                         if signal.signal.name == cargo[i].name then
                             local count = input.insert(cargo[i])
                             cargo[i].count = cargo[i].count - count
