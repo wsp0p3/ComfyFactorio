@@ -2,10 +2,13 @@ local event = require 'utils.event'
 local Tick_functions = require "maps.wagon_rooms.tick_functions"
 local Locomotive = require "maps.wagon_rooms.locomotive"
 
-local starting_items = {['locomotive'] = 1, ['cargo-wagon'] = 5, ['rail'] = 50, ['wood'] = 16}
+local starting_items = {['iron-plate'] = 400, ['copper-plate'] = 200, ['stone'] = 50, ['locomotive'] = 1, ['cargo-wagon'] = 3, ['rail'] = 100, ['train-stop'] = 2, ['wood'] = 50}
 
 local function on_player_joined_game(event)
 	local player = game.players[event.player_index]
+    player.force.recipes.loader.enabled=true
+    player.force.recipes["fast-loader"].enabled = true
+    player.force.recipes["express-loader"].enabled = true
 	player.force = "player"
     if player.online_time == 0 then
         for item, amount in pairs(starting_items) do
