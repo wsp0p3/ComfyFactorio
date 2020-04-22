@@ -129,6 +129,11 @@ function Public.enter_cargo_wagon(player, vehicle)
 
     if current_wagon ~= nil then
         current_wagon = current_wagon["vehicle"]
+        if not current_wagon.valid then
+            player.teleport(game.surfaces[1].find_non_colliding_position("character", {x = 0, y = 0}, 128, -0.5), game.surfaces[1])
+            return
+        end
+
         if vehicle.type == "car" then
             local surface = current_wagon.surface
             if global.wagons[player.surface.name]["exits"]["N"] == vehicle then
