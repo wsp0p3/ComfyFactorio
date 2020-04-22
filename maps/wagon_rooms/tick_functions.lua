@@ -36,6 +36,7 @@ function Public_tick.move_items()
                     for _, signal in pairs(input_filter) do
                         if cargo[i].valid_for_read then
                             if signal.signal.name == cargo[i].name then
+                                -- TODO: take input value as max count
                                 local count = input.insert(cargo[i])
                                 cargo[i].count = cargo[i].count - count
                             end

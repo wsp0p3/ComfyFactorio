@@ -2,7 +2,7 @@ local event = require 'utils.event'
 local Tick_functions = require "maps.wagon_rooms.tick_functions"
 local Locomotive = require "maps.wagon_rooms.locomotive"
 
-local starting_items = {['iron-plate'] = 400, ['copper-plate'] = 200, ['stone'] = 50, ['locomotive'] = 1, ['cargo-wagon'] = 3, ['rail'] = 100, ['train-stop'] = 2, ['wood'] = 50}
+local starting_items = {['iron-plate'] = 600, ['copper-plate'] = 200, ['stone'] = 100, ['locomotive'] = 1, ['cargo-wagon'] = 3, ['rail'] = 200, ['train-stop'] = 4, ['wood'] = 50}
 
 local function on_player_joined_game(event)
 	local player = game.players[event.player_index]

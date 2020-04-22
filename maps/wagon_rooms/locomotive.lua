@@ -61,7 +61,7 @@ local function create_wagon_room(name)
 	surface.request_to_generate_chunks({0,0}, 1)
 	surface.force_generate_chunk_requests()
 
-	for i = map_gen_settings.width * -0.5, map_gen_settings.width * 0.5, 1 do
+	for i = map_gen_settings.width * -0.5, map_gen_settings.width * 0.5 - 1, 1 do
         for j = map_gen_settings.height * -0.5, map_gen_settings.height * 0.5, 1 do
 	        surface.set_tiles({{name = "refined-concrete", position = {x = i, y = j }}})
         end
@@ -91,9 +91,7 @@ local function create_wagon_room(name)
 
     global.wagons[name]["chests"] = {}
 
-    surface.create_entity({name = "flying-text", position = {x = 10, y = 8}, text = "IN", color = {r = 255, g = 255, b = 255}})
     global.wagons[name]["chests"]["in"] = create_chest(surface, {x = 8, y = 10})
-    surface.create_entity({name = "flying-text", position = {x = 14, y = 10}, text = "cfg", color = {r = 255, g = 255, b = 255}})
     global.wagons[name]["cfg"] = surface.create_entity({name = "constant-combinator", position = {x = 10, y = 10}, force = "player", create_build_effect_smoke = false})
     pole = surface.create_entity({name = "medium-electric-pole", position = {x = 12, y = 10}, force = "player", create_build_effect_smoke = false})
     pole.destructible = false
@@ -101,21 +99,18 @@ local function create_wagon_room(name)
     pole.operable = false
     pole.connect_neighbour({wire = defines.wire_type.green, target_entity = global.wagons[name]["cfg"], source_circuit_id = 1, target_circuit_id = 1})
 
-    surface.create_entity({name = "flying-text", position = {x = 10, y = -12}, text = "IN", color = {r = 255, g = 255, b = 255}})
     global.wagons[name]["chests"]["out"] = create_chest(surface, {x = 8, y = -10})
 
     global.wagons[name]["chests"]["N"] = {}
 
-    surface.create_entity({name = "flying-text", position = {x = 5, y = -19}, text = "IN", color = {r = 255, g = 255, b = 255}})
+    -- TODO: more chests in both directions?
+
     global.wagons[name]["chests"]["N"]["in"] = create_chest(surface, {x = 5, y = -17})
-    surface.create_entity({name = "flying-text", position = {x = -5, y = -19}, text = "OUT", color = {r = 255, g = 255, b = 255}})
     global.wagons[name]["chests"]["N"]["out"] = create_chest(surface, {x = -5, y = -17})
 
     global.wagons[name]["chests"]["S"] = {}
-    global.wagons[name]["chests"]["S"]["in"] = create_chest(surface, {x = -5, y = 16})
-    surface.create_entity({name = "flying-text", position = {x = 5, y = 18}, text = "IN", color = {r = 255, g = 255, b = 255}})
-    global.wagons[name]["chests"]["S"]["out"] = create_chest(surface, {x = 5, y = 16})
-    surface.create_entity({name = "flying-text", position = {x = -5, y = 18}, text = "OUT", color = {r = 255, g = 255, b = 255}})
+    global.wagons[name]["chests"]["S"]["in"] = create_chest(surface, {x = -5, y = 17})
+    global.wagons[name]["chests"]["S"]["out"] = create_chest(surface, {x = 5, y = 17})
 end
 
 function Public.enter_cargo_wagon(player, vehicle)
@@ -134,6 +129,7 @@ function Public.enter_cargo_wagon(player, vehicle)
             return
         end
 
+        -- TODO: calculate vector "cargo -> train" and get in/out from/in the correct direction
         if vehicle.type == "car" then
             local surface = current_wagon.surface
             if global.wagons[player.surface.name]["exits"]["N"] == vehicle then
