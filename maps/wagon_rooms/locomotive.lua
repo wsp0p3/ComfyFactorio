@@ -84,8 +84,8 @@ local function create_wagon_room(name)
 
     global.wagons[name]["exits"] = {}
 
-    create_exit_car(surface, { x = 0, y = height * 0.5 + 1}, name, "N")
-    create_exit_car(surface, { x = 0, y = height * -0.5 - 1}, name, "S")
+    create_exit_car(surface, { x = 0, y = height * -0.5 + 1}, name, "N")
+    create_exit_car(surface, { x = 0, y = height * 0.5 - 1}, name, "S")
     create_exit_car(surface, { x = width * 0.5 + 1.4, y = 0 }, name, "E")
     create_exit_car(surface, { x = width * -0.5 - 1.4, y = 0 }, name, "W")
 
@@ -134,19 +134,19 @@ function Public.enter_cargo_wagon(player, vehicle)
             local surface = current_wagon.surface
             if global.wagons[player.surface.name]["exits"]["N"] == vehicle then
                 local prev_wagon = Train_help.find_prev_wagon(current_wagon)
-                if prev_wagon ~= nil then
-                    position = { x = 0, y = prev_wagon.surface.map_gen_settings.height * - 0.5}
+                if prev_wagon ~= nil and prev_wagon.surface ~= nil then
+                    position = { x = 0, y = prev_wagon.surface.map_gen_settings.height * 0.5}
                     player.teleport(prev_wagon.surface.find_non_colliding_position("character", position, 128, -0.5), prev_wagon.surface)
                 else
-                    player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y + 4}, 128, 0.5), surface)
+                    player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y - 4}, 128, 0.5), surface)
                 end
             elseif global.wagons[player.surface.name]["exits"]["S"] == vehicle then
                 local next_wagon = Train_help.find_next_wagon(current_wagon)
-                if next_wagon ~= nil then
-                    position = {x = 0, y = next_wagon.surface.map_gen_settings.height * 0.5}
+                if next_wagon ~= nil and next_wagon.surface ~= nil then
+                    position = {x = 0, y = next_wagon.surface.map_gen_settings.height * - 0.5}
                     player.teleport(next_wagon.surface.find_non_colliding_position("character", position, 128, 0.5), next_wagon.surface)
                 else
-                   player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y - 4}, 128, 0.5), surface)
+                   player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y + 4}, 128, 0.5), surface)
                 end
             elseif global.wagons[player.surface.name]["exits"]["E"] == vehicle then
                 player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x + 2, y = current_wagon.position.y}, 128, 0.5), surface)

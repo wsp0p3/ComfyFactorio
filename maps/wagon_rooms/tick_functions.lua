@@ -7,11 +7,15 @@ local math_floor = math.floor
 local math_ceil = math.ceil
 local math_min = math.min
 
-local function move_all_from_to(from, to)
-    for i = 1, #from, 1 do
-        if from[i].valid_for_read then
-            local count = to.insert(from[i])
-            from[i].count = from[i].count - count
+local function move_all_from_to(from_inv, to_inv)
+    if from_inv == nil or to_inv == nil then
+        return
+    end
+
+    for i = 1, #from_inv, 1 do
+        if from_inv[i].valid_for_read then
+            local count = to_inv.insert(from_inv[i])
+            from_inv[i].count = from_inv[i].count - count
         end
     end
 end
@@ -50,26 +54,35 @@ function Public_tick.move_items()
             local prev = Train_help.find_prev_wagon(wagon["vehicle"])
 
             if prev ~= nil then
-                local cur_out = wagon["chests"]["S"]["out"].get_inventory(defines.inventory.chest)
-                local cur_in = wagon["chests"]["S"]["in"].get_inventory(defines.inventory.chest)
+                local cur_out = wagon["chests"]["N"]["out"].get_inventory(defines.inventory.chest)
+                local cur_in = wagon["chests"]["N"]["in"].get_inventory(defines.inventory.chest)
 
-                local prev_out = prev["chests"]["N"]["out"].get_inventory(defines.inventory.chest)
-                local prev_in = prev["chests"]["N"]["in"].get_inventory(defines.inventory.chest)
+                if prev["vehicle"].type ~= "locomotive" then
+                    local prev_out = prev["chests"]["S"]["out"].get_inventory(defines.inventory.chest)
+                    local prev_in = prev["chests"]["S"]["in"].get_inventory(defines.inventory.chest)
 
-                move_all_from_to(cur_out, prev_in)
-                move_all_from_to(prev_out, cur_in)
+                    move_all_from_to(cur_out, prev_in)
+                    move_all_from_to(prev_out, cur_in)
+                else
+                    local prev_in = prev["vehicle"].get_inventory(defines.inventory.fuel)
+                    move_all_from_to(cur_out, prev_in)
+                end
             end
 
             local next = Train_help.find_next_wagon(wagon["vehicle"])
             if next ~= nil then
-                local cur_out = wagon["chests"]["N"]["out"].get_inventory(defines.inventory.chest)
-                local cur_in = wagon["chests"]["N"]["in"].get_inventory(defines.inventory.chest)
+                local cur_out = wagon["chests"]["S"]["out"].get_inventory(defines.inventory.chest)
+                local cur_in = wagon["chests"]["S"]["in"].get_inventory(defines.inventory.chest)
+                if next["vehicle"].type ~= "locomotive" then
+                    local next_out = next["chests"]["N"]["out"].get_inventory(defines.inventory.chest)
+                    local next_in = next["chests"]["N"]["in"].get_inventory(defines.inventory.chest)
 
-                local next_out = next["chests"]["S"]["out"].get_inventory(defines.inventory.chest)
-                local next_in = next["chests"]["S"]["in"].get_inventory(defines.inventory.chest)
-
-                move_all_from_to(cur_out, next_in)
-                move_all_from_to(next_out, cur_in)
+                    move_all_from_to(cur_out, next_in)
+                    move_all_from_to(next_out, cur_in)
+                else
+                    local next_in = next["vehicle"].get_inventory(defines.inventory.fuel)
+                    move_all_from_to(cur_out, next_in)
+                end
             end
         end
     end
