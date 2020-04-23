@@ -47,4 +47,32 @@ function Public_trainhelp.find_next_wagon(current_wagon)
         end
 end
 
+function Public_trainhelp.get_wagon_orientation(current_wagon)
+    local vector = { x = 0, y = 0 }
+
+    local prev_wagon = Public_trainhelp.find_prev_wagon(current_wagon)
+    local next_wagon = Public_trainhelp.find_next_wagon(current_wagon)
+
+    if prev_wagon ~= nil then
+         vector.x = vector.x + prev_wagon["vehicle"].position.x - current_wagon.position.x
+         vector.y = vector.y + prev_wagon["vehicle"].position.y - current_wagon.position.y
+    end
+
+    if next_wagon ~= nil then
+        vector.x = vector.x + current_wagon.position.x - next_wagon["vehicle"].position.x
+        vector.y = vector.y + current_wagon.position.y - next_wagon["vehicle"].position.y
+
+        if prev_wagon ~= nil then
+            vector.x = vector.x * 0.5
+            vector.y = vector.y * 0.5
+        end
+    end
+
+    if vector.x == 0 and vector.y == 0 then
+        vector.y = 2
+    end
+
+    return vector
+end
+
 return Public_trainhelp

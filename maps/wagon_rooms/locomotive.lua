@@ -84,8 +84,8 @@ local function create_wagon_room(name)
 
     global.wagons[name]["exits"] = {}
 
-    create_exit_car(surface, { x = 0, y = height * -0.5 + 1}, name, "N")
-    create_exit_car(surface, { x = 0, y = height * 0.5 - 1}, name, "S")
+    create_exit_car(surface, { x = 0, y = height * -0.5 - 1}, name, "N")
+    create_exit_car(surface, { x = 0, y = height * 0.5 + 1}, name, "S")
     create_exit_car(surface, { x = width * 0.5 + 1.4, y = 0 }, name, "E")
     create_exit_car(surface, { x = width * -0.5 - 1.4, y = 0 }, name, "W")
 
@@ -131,27 +131,30 @@ function Public.enter_cargo_wagon(player, vehicle)
 
         -- TODO: calculate vector "cargo -> train" and get in/out from/in the correct direction
         if vehicle.type == "car" then
+            local prev_wagon = Train_help.find_prev_wagon(current_wagon)
+            local next_wagon = Train_help.find_next_wagon(current_wagon)
+
+            local vector = Train_help.get_wagon_orientation(current_wagon)
+
             local surface = current_wagon.surface
             if global.wagons[player.surface.name]["exits"]["N"] == vehicle then
-                local prev_wagon = Train_help.find_prev_wagon(current_wagon)
                 if prev_wagon ~= nil and prev_wagon.surface ~= nil then
                     position = { x = 0, y = prev_wagon.surface.map_gen_settings.height * 0.5}
                     player.teleport(prev_wagon.surface.find_non_colliding_position("character", position, 128, -0.5), prev_wagon.surface)
                 else
-                    player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y - 4}, 128, 0.5), surface)
+                    player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x + vector.x, y = current_wagon.position.y + vector.y}, 128, 0.5), surface)
                 end
             elseif global.wagons[player.surface.name]["exits"]["S"] == vehicle then
-                local next_wagon = Train_help.find_next_wagon(current_wagon)
                 if next_wagon ~= nil and next_wagon.surface ~= nil then
                     position = {x = 0, y = next_wagon.surface.map_gen_settings.height * - 0.5}
                     player.teleport(next_wagon.surface.find_non_colliding_position("character", position, 128, 0.5), next_wagon.surface)
                 else
-                   player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x, y = current_wagon.position.y + 4}, 128, 0.5), surface)
+                   player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x + vector.x * -1, y = current_wagon.position.y + vector.y * -1}, 128, 0.5), surface)
                 end
             elseif global.wagons[player.surface.name]["exits"]["E"] == vehicle then
-                player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x + 2, y = current_wagon.position.y}, 128, 0.5), surface)
+                player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x - (vector.y * 0.5), y = current_wagon.position.y + (vector.x * 0.5)}, 128, 0.5), surface)
             elseif global.wagons[player.surface.name]["exits"]["W"] == vehicle then
-                player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x - 2, y = current_wagon.position.y}, 128, 0.5), surface)
+                player.teleport(surface.find_non_colliding_position("character", {x = current_wagon.position.x + (vector.y * 0.5), y = current_wagon.position.y - (vector.x * 0.5)}, 128, 0.5), surface)
             end
         end
     elseif vehicle.type == "cargo-wagon" then
@@ -175,18 +178,20 @@ function Public.enter_cargo_wagon(player, vehicle)
 
         local wagon_surface = global.wagons[name].surface
 
-        local x_vector = vehicle.position.x - player.position.x
-        local y_vector = vehicle.position.y - player.position.y
+        local vector = { }
+
+        vector.x = vehicle.position.x - player.position.x
+        vector.y = vehicle.position.y - player.position.y
 
         local position
-        if math.abs(x_vector) > math.abs(y_vector) then
-            if x_vector > 0 then
+        if math.abs(vector.x) > math.abs(vector.y) then
+            if vector.x > 0 then
                 position = {wagon_surface.map_gen_settings.width * -0.5, 0}
             else
                 position = {wagon_surface.map_gen_settings.width * 0.5, 0}
             end
         else
-            if y_vector > 0 then
+            if vector.y > 0 then
                 position = {0, wagon_surface.map_gen_settings.height * - 0.5}
             else
                 position = {0, wagon_surface.map_gen_settings.height * 0.5}
