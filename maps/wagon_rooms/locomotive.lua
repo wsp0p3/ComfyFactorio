@@ -7,6 +7,20 @@ local function len(T)
   return count
 end
 
+local function draw_text(entity, offset, text)
+    rendering.draw_text{
+                text = text,
+                surface = entity.surface,
+                target = entity,
+                target_offset = offset,
+                color = {r = 255, g = 255, b = 255},
+                scale = 0.80,
+                font = "default-game",
+                alignment = "center",
+                scale_with_zoom = false
+            }
+end
+
 local function create_chest(surface, position)
     local chest = surface.create_entity({name = "steel-chest", position = position, force = "player", create_build_effect_smoke = false})
     chest.destructible = false
@@ -85,14 +99,23 @@ local function create_wagon_room(name)
     global.wagons[name]["exits"] = {}
 
     create_exit_car(surface, { x = 0, y = height * -0.5 - 1}, name, "N")
+    draw_text(global.wagons[name]["exits"]["N"], {0, -3}, "Wagon in Front")
+
     create_exit_car(surface, { x = 0, y = height * 0.5 + 1}, name, "S")
+    draw_text(global.wagons[name]["exits"]["S"], {0, 4}, "Wagon Behind")
+
     create_exit_car(surface, { x = width * 0.5 + 1.4, y = 0 }, name, "E")
     create_exit_car(surface, { x = width * -0.5 - 1.4, y = 0 }, name, "W")
 
     global.wagons[name]["chests"] = {}
 
     global.wagons[name]["chests"]["in"] = create_chest(surface, {x = 8, y = 10})
+    draw_text(global.wagons[name]["chests"]["in"], {0, -3}, "Cargo")
+    draw_text(global.wagons[name]["chests"]["in"], {0, -2}, "IN")
+
     global.wagons[name]["cfg"] = surface.create_entity({name = "constant-combinator", position = {x = 10, y = 10}, force = "player", create_build_effect_smoke = false})
+    draw_text(global.wagons[name]["cfg"], {0, -2}, "Config")
+
     pole = surface.create_entity({name = "medium-electric-pole", position = {x = 12, y = 10}, force = "player", create_build_effect_smoke = false})
     pole.destructible = false
     pole.minable = false
@@ -100,17 +123,23 @@ local function create_wagon_room(name)
     pole.connect_neighbour({wire = defines.wire_type.green, target_entity = global.wagons[name]["cfg"], source_circuit_id = 1, target_circuit_id = 1})
 
     global.wagons[name]["chests"]["out"] = create_chest(surface, {x = 8, y = -10})
+    draw_text(global.wagons[name]["chests"]["out"], {0, -3}, "Cargo")
+    draw_text(global.wagons[name]["chests"]["out"], {0, -2}, "OUT")
 
     global.wagons[name]["chests"]["N"] = {}
 
     -- TODO: more chests in both directions?
 
     global.wagons[name]["chests"]["N"]["in"] = create_chest(surface, {x = 5, y = -17})
+    draw_text(global.wagons[name]["chests"]["N"]["in"], {0, -2}, "IN")
     global.wagons[name]["chests"]["N"]["out"] = create_chest(surface, {x = -5, y = -17})
+    draw_text(global.wagons[name]["chests"]["N"]["out"], {0, -2}, "OUT")
 
     global.wagons[name]["chests"]["S"] = {}
     global.wagons[name]["chests"]["S"]["in"] = create_chest(surface, {x = -5, y = 17})
+    draw_text(global.wagons[name]["chests"]["S"]["in"], {0, 1}, "IN")
     global.wagons[name]["chests"]["S"]["out"] = create_chest(surface, {x = 5, y = 17})
+    draw_text(global.wagons[name]["chests"]["S"]["out"], {0, 1}, "OUT")
 end
 
 function Public.enter_cargo_wagon(player, vehicle)
